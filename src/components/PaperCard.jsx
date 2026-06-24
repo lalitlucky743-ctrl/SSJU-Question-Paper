@@ -1,201 +1,179 @@
 import React, { useState } from 'react';
+import PaymentModal from './PaymentModal';
 
 const PaperCard = ({ paper }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const [isClicked, setIsClicked] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [isPaid, setIsPaid] = useState(false);
+  const [showFullSolution, setShowFullSolution] = useState(false);
+
+  // Preview questions (pehle 2 free)
+  const previewQuestions = [
+    'Q1. What is the meaning of management?',
+    'Q2. Explain the functions of management.'
+  ];
+
+  // Full questions (after payment)
+  const fullQuestions = [
+    'Q1. What is the meaning of management?',
+    'Q2. Explain the functions of management.',
+    'Q3. What is the difference between management and administration?',
+    'Q4. Explain the 14 principles of management by Henri Fayol.',
+    'Q5. What is the importance of planning in management?',
+    'Q6. Explain the steps in the decision-making process.',
+    'Q7. What are the functions of a manager?',
+    'Q8. Explain the concept of organizational behavior.'
+  ];
+
+  const handlePaymentSuccess = (paperId) => {
+    setIsPaid(true);
+    setShowFullSolution(true);
+    localStorage.setItem(`paper_${paperId}_paid`, 'true');
+  };
+
+  const handleViewClick = () => {
+    // Check if already paid
+    const paid = localStorage.getItem(`paper_${paper.id}_paid`);
+    if (paid === 'true' || isPaid) {
+      setIsPaid(true);
+      setShowFullSolution(true);
+    } else {
+      setShowPayment(true);
+    }
+  };
 
   const handleDownload = () => {
-    setIsClicked(true);
-    alert(`📄 Downloading: ${paper.code} - ${paper.title}`);
-    setTimeout(() => setIsClicked(false), 500);
+    if (isPaid || localStorage.getItem(`paper_${paper.id}_paid`) === 'true') {
+      alert(`📥 Downloading: ${paper.code} - ${paper.title}\n\nFull solution PDF is ready!`);
+    } else {
+      setShowPayment(true);
+    }
   };
-
-  // Color mapping for departments
-  const getDepartmentColors = (dept) => {
-    const colors = {
-      'Management': {
-        bg: 'from-emerald-50 to-teal-50',
-        border: 'hover:border-emerald-300',
-        shadow: 'hover:shadow-emerald-200/50',
-        badge: 'bg-emerald-100 text-emerald-700',
-        icon: 'text-emerald-500',
-        gradient: 'from-emerald-400 to-teal-400'
-      },
-      'Science': {
-        bg: 'from-blue-50 to-cyan-50',
-        border: 'hover:border-blue-300',
-        shadow: 'hover:shadow-blue-200/50',
-        badge: 'bg-blue-100 text-blue-700',
-        icon: 'text-blue-500',
-        gradient: 'from-blue-400 to-cyan-400'
-      },
-      'Arts': {
-        bg: 'from-purple-50 to-pink-50',
-        border: 'hover:border-purple-300',
-        shadow: 'hover:shadow-purple-200/50',
-        badge: 'bg-purple-100 text-purple-700',
-        icon: 'text-purple-500',
-        gradient: 'from-purple-400 to-pink-400'
-      }
-    };
-    return colors[dept] || colors['Management'];
-  };
-
-  const colors = getDepartmentColors(paper.department);
 
   return (
-    <div 
-      className={`group relative bg-white rounded-2xl overflow-hidden 
-        transition-all duration-500 ease-out
-        border-2 border-gray-100 ${colors.border}
-        ${colors.shadow}
-        ${isHovered ? 'shadow-2xl -translate-y-3 scale-[1.02]' : 'shadow-md'}
-        transform-gpu`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      style={{
-        transformStyle: 'preserve-3d',
-        perspective: '1000px'
-      }}
-    >
-      {/* Animated Gradient Background */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${colors.bg} 
-        opacity-0 group-hover:opacity-100 transition-opacity duration-700 
-        pointer-events-none`}>
-      </div>
-
-      {/* Shimmer Effect */}
-      <div className={`absolute inset-0 bg-gradient-to-r from-transparent 
-        via-white/30 to-translate -translate-x-full 
-        group-hover:translate-x-full transition-transform duration-1000 
-        pointer-events-none`}>
-      </div>
-
-      {/* Glowing Border Animation */}
-      <div className={`absolute -inset-0.5 bg-gradient-to-r ${colors.gradient} 
-        rounded-2xl blur-sm opacity-0 group-hover:opacity-20 
-        transition-opacity duration-500 group-hover:animate-pulse`}>
-      </div>
-
-      <div className="relative p-5">
-        {/* Header - Code & Semester */}
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <span className={`inline-flex items-center gap-1.5 px-3 py-1 
-              rounded-full text-xs font-bold ${colors.badge}
-              group-hover:scale-110 transition-transform duration-300`}>
-              <i className={`fas fa-hashtag ${colors.icon} text-[10px]`}></i>
+    <>
+      <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 
+        overflow-hidden border border-gray-100 hover:-translate-y-2 group">
+        <div className="p-5">
+          {/* Code & Semester */}
+          <div className="flex items-start justify-between mb-2">
+            <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">
               {paper.code}
             </span>
-            
-            {/* Animated Badge */}
-            <span className={`inline-flex items-center gap-1 px-2 py-0.5 
-              rounded-full text-[10px] font-medium bg-gray-100 text-gray-600
-              group-hover:bg-gradient-to-r ${colors.gradient} 
-              group-hover:text-white transition-all duration-300
-              group-hover:shadow-lg`}>
-              <i className={`fas fa-graduation-cap ${colors.icon}`}></i>
+            <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs">
               {paper.semester}
             </span>
           </div>
-          
-          {/* Floating Year Badge */}
-          <span className={`inline-flex items-center gap-1 px-2.5 py-1 
-            rounded-full text-[10px] font-medium bg-gray-50 text-gray-500
-            group-hover:bg-white group-hover:shadow-md 
-            transition-all duration-300 ${isHovered ? 'animate-bounce' : ''}`}>
-            <i className="far fa-calendar-alt text-gray-400"></i>
-            {paper.year}
-          </span>
-        </div>
 
-        {/* Title */}
-        <h4 className={`text-base font-bold text-gray-800 mb-2 
-          group-hover:text-gray-900 transition-colors duration-300
-          group-hover:translate-x-1 transition-transform duration-300`}>
-          {paper.title}
-        </h4>
+          {/* Title */}
+          <h4 className="font-bold text-gray-800 text-lg mb-1 group-hover:text-blue-600 
+            transition-colors duration-300">
+            {paper.title}
+          </h4>
 
-        {/* Department */}
-        <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
-          <div className={`w-1.5 h-1.5 rounded-full ${colors.icon} 
-            group-hover:scale-150 transition-transform duration-300`}>
+          {/* Department & Year */}
+          <p className="text-sm text-gray-500 mb-3">
+            <i className="fas fa-building mr-1"></i>
+            {paper.department} • {paper.year}
+          </p>
+
+          {/* Preview Questions (Free) */}
+          <div className="bg-gray-50 rounded-xl p-3 mb-3">
+            <p className="text-xs font-semibold text-gray-500 mb-2">
+              📝 Preview (First 2 Questions - Free)
+            </p>
+            {previewQuestions.map((q, idx) => (
+              <p key={idx} className="text-xs text-gray-600 py-0.5">
+                {q}
+              </p>
+            ))}
+            {!isPaid && !localStorage.getItem(`paper_${paper.id}_paid`) && (
+              <p className="text-xs text-yellow-600 mt-1">
+                🔒 {fullQuestions.length - previewQuestions.length} more questions locked
+              </p>
+            )}
           </div>
-          <span className="group-hover:text-gray-700 transition-colors duration-300">
-            <i className={`fas fa-building ${colors.icon} mr-1`}></i>
-            {paper.department}
-          </span>
-        </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100 
-          group-hover:border-gray-200 transition-colors duration-300">
-          
-          {/* PDF Status with Animation */}
-          <div className="flex items-center gap-1.5">
-            <div className={`relative w-3 h-3 ${isHovered ? 'animate-pulse' : ''}`}>
-              <span className={`absolute inset-0 rounded-full bg-green-400 
-                ${isHovered ? 'animate-ping opacity-75' : ''}`}>
-              </span>
-              <span className={`absolute inset-0.5 rounded-full bg-green-500 
-                ${isHovered ? 'animate-pulse' : ''}`}>
-              </span>
+          {/* Full Solution (Paid) */}
+          {(isPaid || localStorage.getItem(`paper_${paper.id}_paid`) === 'true') && showFullSolution && (
+            <div className="bg-green-50 border border-green-200 rounded-xl p-3 mb-3 animate-fade-in">
+              <p className="text-xs font-semibold text-green-700 mb-2">
+                ✅ Full Solution Unlocked!
+              </p>
+              {fullQuestions.map((q, idx) => (
+                <p key={idx} className="text-xs text-gray-700 py-0.5">
+                  {q}
+                </p>
+              ))}
             </div>
-            <span className="text-[10px] text-gray-400 font-medium 
-              group-hover:text-gray-600 transition-colors duration-300">
-              PDF Available
-            </span>
-          </div>
+          )}
 
-          {/* View Button with Light Color Effect */}
-          <button
-            onClick={handleDownload}
-            disabled={isClicked}
-            className={`relative overflow-hidden px-4 py-1.5 rounded-full 
-              text-xs font-bold transition-all duration-300
-              ${isClicked ? 'scale-95' : 'group-hover:scale-105'}
-              ${isHovered ? `bg-gradient-to-r ${colors.gradient} text-white shadow-lg shadow-${colors.gradient.split('-')[1]}-200/50` 
-                : 'bg-gray-100 text-gray-600'}
-              transform-gpu`}
-          >
-            {/* Button Shine */}
-            <span className={`absolute inset-0 bg-gradient-to-r from-transparent 
-              via-white/30 to-transparent -translate-x-full 
-              ${isHovered ? 'group-hover:translate-x-full' : ''} 
-              transition-transform duration-700`}>
-            </span>
-            
-            <span className="relative flex items-center gap-1.5">
-              {isClicked ? (
+          {/* Buttons */}
+          <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
+            {/* View Button */}
+            <button
+              onClick={handleViewClick}
+              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all duration-300
+                ${(isPaid || localStorage.getItem(`paper_${paper.id}_paid`) === 'true')
+                  ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:scale-105' 
+                  : 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:scale-105'}
+                shadow-lg shadow-blue-500/30`}
+            >
+              {(isPaid || localStorage.getItem(`paper_${paper.id}_paid`) === 'true') ? (
                 <>
-                  <i className="fas fa-spinner animate-spin"></i>
-                  <span>Loading...</span>
+                  <i className="fas fa-eye mr-1"></i> View Full
                 </>
               ) : (
                 <>
-                  <i className={`fas fa-download text-[10px] 
-                    ${isHovered ? 'animate-bounce' : ''}`}>
-                  </i>
-                  <span>View</span>
-                  {isHovered && (
-                    <i className="fas fa-arrow-right text-[10px] 
-                      animate-pulse ml-0.5">
-                    </i>
-                  )}
+                  <i className="fas fa-eye mr-1"></i> Free Preview
                 </>
               )}
-            </span>
-          </button>
-        </div>
+            </button>
 
-        {/* Decorative Corner Accent */}
-        <div className={`absolute -top-1 -right-1 w-8 h-8 
-          bg-gradient-to-br ${colors.gradient} 
-          opacity-0 group-hover:opacity-20 transition-opacity duration-500 
-          rounded-bl-2xl`}>
+            {/* Download Button - Paid */}
+            <button
+              onClick={handleDownload}
+              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all duration-300
+                ${(isPaid || localStorage.getItem(`paper_${paper.id}_paid`) === 'true')
+                  ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:scale-105 shadow-lg shadow-yellow-500/30' 
+                  : 'bg-gray-200 text-gray-500 hover:bg-gray-300'}
+                flex items-center justify-center gap-1`}
+            >
+              {(isPaid || localStorage.getItem(`paper_${paper.id}_paid`) === 'true') ? (
+                <>
+                  <i className="fas fa-download"></i> Download PDF
+                </>
+              ) : (
+                <>
+                  <i className="fas fa-lock"></i> ₹20 Unlock
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* Status Badge */}
+          <div className="mt-2 text-center">
+            {(isPaid || localStorage.getItem(`paper_${paper.id}_paid`) === 'true') ? (
+              <span className="text-[10px] text-green-600">
+                <i className="fas fa-check-circle mr-1"></i> Full solution purchased
+              </span>
+            ) : (
+              <span className="text-[10px] text-gray-400">
+                <i className="fas fa-lock mr-1"></i> Preview only • ₹20 for full solution
+              </span>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Payment Modal */}
+      {showPayment && (
+        <PaymentModal
+          paper={paper}
+          onClose={() => setShowPayment(false)}
+          onPaymentSuccess={handlePaymentSuccess}
+        />
+      )}
+    </>
   );
 };
 
