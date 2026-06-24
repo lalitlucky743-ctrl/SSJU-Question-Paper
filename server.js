@@ -6,7 +6,7 @@ const crypto = require('crypto');
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000', 'http://127.0.0.1:3001'],
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'https://ssju-questionpaper.netlify.app/', 'https://ssju-question-paper-6ffw.vercel.app/'],
   credentials: true
 }));
 
