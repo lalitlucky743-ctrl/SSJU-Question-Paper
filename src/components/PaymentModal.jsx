@@ -24,7 +24,7 @@ const PaymentModal = ({ paper, onClose, onPaymentSuccess }) => {
         return;
       }
 
-     const response = await fetch('https://ssju-question-paper.onrender.com', {
+     const response = await fetch('https://ssju-question-paper.onrender.com/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
