@@ -24,7 +24,7 @@ const PaymentModal = ({ paper, onClose, onPaymentSuccess }) => {
         return;
       }
 
-     const response = await fetch('http://127.0.0.1:5000/api/create-order', {
+     const response = await fetch('https://ssju-question-paper.onrender.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -74,7 +74,7 @@ const PaymentModal = ({ paper, onClose, onPaymentSuccess }) => {
 
   const verifyPayment = async (paymentResponse, orderId) => {
     try {
-      const verifyRes = await fetch('http://localhost:5000/api/verify-payment', {
+      const verifyRes = await fetch('https://ssju-question-paper.onrender.com/api/verify-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
