@@ -31,32 +31,34 @@ app.get('/test', (req, res) => {
 // CREATE ORDER
 app.post('/api/create-order', async (req, res) => {
   try {
-    const { amount, paperId } = req.body;
+    const { amount } = req.body;
 
-    const options = {
-      amount: amount * 100,
+    const order = await razorpay.orders.create({
+      amount: amount * 2000,
       currency: 'INR',
-      receipt: `paper_${paperId}`,
-      payment_capture: 1
-    };
-
-    const order = await razorpay.orders.create(options);
-
-    res.json({
-      success: true,
-      orderId: order.id,
-      amount: order.amount,
-      currency: order.currency
+      receipt: `receipt_${Date.now()}`
     });
+
+res.json({
+  success: true,
+  orderId: order.id,
+  amount: order.amount,
+  currency: order.currency,
+  key: process.env.RAZORPAY_KEY_ID
+});
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
   }
 });
 
 // VERIFY PAYMENT
 app.post('/api/verify-payment', (req, res) => {
+    
   try {
     const {
       razorpay_order_id,

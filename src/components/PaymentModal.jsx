@@ -24,7 +24,7 @@ const PaymentModal = ({ paper, onClose, onPaymentSuccess }) => {
         return;
       }
 
-     const response = await fetch('https://ssju-payment-backend.onrender.com/api/create-order', {
+      const response = await fetch('https://ssju-payment-backend.onrender.com/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -33,20 +33,24 @@ const PaymentModal = ({ paper, onClose, onPaymentSuccess }) => {
         })
       });
 
-      const orderData = await response.json();
+    const orderData = await response.json();
 
-      if (!orderData.success) {
-        alert('Failed to create order. Please try again.');
-        setLoading(false);
-        return;
-      }
+console.log("Order Data:", orderData);
+console.log("Razorpay Key:", orderData.key);
+
+if (!orderData.success) {
+  alert('Failed to create order. Please try again.');
+  setLoading(false);
+  return;
+}
+
 
       const options = {
-        key: 'rzp_test_T5SmnMwS7qZw3z',
+        key: orderData.key,
         amount: orderData.amount,
         currency: orderData.currency,
         name: 'SSJU Question Paper',
-        description: `Full Solution: ${paper.title}`,
+        description: `Full Solution + PDF: ${paper.title}`,
         order_id: orderData.orderId,
         prefill: {
           name: 'Student',
@@ -87,7 +91,7 @@ const PaymentModal = ({ paper, onClose, onPaymentSuccess }) => {
       const result = await verifyRes.json();
 
       if (result.success) {
-        alert('✅ Payment successful! Full solution is now available.');
+        alert('✅ Payment successful! Full solution + PDF is now available.');
         onPaymentSuccess(paper.id);
         onClose();
       } else {
@@ -100,46 +104,53 @@ const PaymentModal = ({ paper, onClose, onPaymentSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl animate-fade-in-up">
-        <button onClick={onClose} className="float-right text-gray-400 hover:text-gray-600">
-          <i className="fas fa-times"></i>
+        <button onClick={onClose} className="float-right text-gray-400 hover:text-gray-600 
+          transition-colors duration-300">
+          <i className="fas fa-times text-xl"></i>
         </button>
 
         <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full 
-            flex items-center justify-center text-white text-2xl mx-auto mb-3">
+          <div className="w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full 
+            flex items-center justify-center text-white text-3xl mx-auto mb-3
+            shadow-lg shadow-yellow-500/30 animate-pulse">
             <i className="fas fa-file-pdf"></i>
           </div>
           <h3 className="text-xl font-bold text-gray-800">{paper.title}</h3>
           <p className="text-sm text-gray-500">{paper.code} • {paper.department}</p>
         </div>
 
-        <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-4 text-center mb-6">
-          <p className="text-sm text-gray-600">Full Solution Price</p>
+        <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-4 text-center mb-6
+          border border-yellow-100">
+          <p className="text-sm text-gray-600">Full Solution + PDF Download</p>
           <p className="text-3xl font-bold text-gray-800">₹20 <span className="text-sm font-normal text-gray-500">/paper</span></p>
           <p className="text-xs text-green-600 mt-1">✅ Instant access after payment</p>
         </div>
 
         <ul className="space-y-2 text-sm text-gray-600 mb-6">
-          <li className="flex items-center gap-2">
+          <li className="flex items-center gap-2 hover:translate-x-1 transition-all duration-300">
             <i className="fas fa-check-circle text-green-500"></i>
             Complete step-by-step solutions
           </li>
-          <li className="flex items-center gap-2">
+          <li className="flex items-center gap-2 hover:translate-x-1 transition-all duration-300">
             <i className="fas fa-check-circle text-green-500"></i>
             Download PDF after payment
           </li>
-          <li className="flex items-center gap-2">
+          <li className="flex items-center gap-2 hover:translate-x-1 transition-all duration-300">
             <i className="fas fa-check-circle text-green-500"></i>
             Access from any device
+          </li>
+          <li className="flex items-center gap-2 hover:translate-x-1 transition-all duration-300">
+            <i className="fas fa-check-circle text-green-500"></i>
+            Print ready format
           </li>
         </ul>
 
         <button
           onClick={handlePayment}
           disabled={loading}
-          className={`w-full py-3 rounded-xl font-bold text-white text-center
+          className={`w-full py-3.5 rounded-xl font-bold text-white text-center
             ${loading ? 'bg-gray-400' : 'bg-gradient-to-r from-yellow-400 to-orange-500 hover:scale-[1.02]'}
             transition-all duration-300 shadow-lg shadow-yellow-500/30
             flex items-center justify-center gap-2`}
@@ -157,8 +168,8 @@ const PaymentModal = ({ paper, onClose, onPaymentSuccess }) => {
           )}
         </button>
 
-        <p className="text-center text-[10px] text-gray-400 mt-4">
-          <i className="fas fa-shield-alt mr-1"></i>
+        <p className="text-center text-[10px] text-gray-400 mt-4 flex items-center justify-center gap-1">
+          <i className="fas fa-shield-alt"></i>
           Secured by Razorpay • 100% Safe
         </p>
       </div>
