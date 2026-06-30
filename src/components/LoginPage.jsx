@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(true);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    alert(isLogin ? '✅ Login Successful!' : '✅ Account Created!');
+  };
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 border border-gray-100">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full 
-            flex items-center justify-center text-white text-2xl mx-auto mb-3">
+          <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 
+            rounded-full flex items-center justify-center text-white text-2xl 
+            mx-auto mb-3 shadow-lg shadow-yellow-500/30">
             <i className="fas fa-user-graduate"></i>
           </div>
           <h2 className="text-2xl font-bold text-gray-800">
@@ -19,41 +26,54 @@ const LoginPage = () => {
           </p>
         </div>
 
-        <form className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {!isLogin && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Full Name
+              </label>
               <input
                 type="text"
-                className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-transparent outline-none"
+                className="w-full px-4 py-2 border border-gray-300 rounded-xl 
+                  focus:ring-2 focus:ring-yellow-400 focus:border-transparent outline-none"
                 placeholder="Your name"
               />
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email Address
+            </label>
             <input
               type="email"
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-xl 
+                focus:ring-2 focus:ring-yellow-400 focus:border-transparent outline-none"
               placeholder="your@email.com"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
             <input
               type="password"
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-xl 
+                focus:ring-2 focus:ring-yellow-400 focus:border-transparent outline-none"
               placeholder="••••••••"
             />
           </div>
           {isLogin && (
             <div className="text-right">
-              <a href="#" className="text-sm text-yellow-500 hover:text-yellow-600">Forgot Password?</a>
+              <a href="#" className="text-sm text-yellow-500 hover:text-yellow-600">
+                Forgot Password?
+              </a>
             </div>
           )}
           <button
             type="submit"
-            className="w-full py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-bold rounded-xl hover:scale-[1.02] transition-all duration-300 shadow-lg shadow-yellow-500/30"
+            className="w-full py-3 bg-gradient-to-r from-yellow-400 to-orange-500 
+              text-white font-bold rounded-xl hover:scale-[1.02] 
+              transition-all duration-300 shadow-lg shadow-yellow-500/30"
           >
             {isLogin ? 'Login' : 'Sign Up'}
           </button>
