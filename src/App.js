@@ -1,3 +1,4 @@
+
 import LoginPopup from './components/LoginPopup';
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
@@ -12,6 +13,10 @@ import PaperGrid from './components/PaperGrid';
 import Footer from './components/Footer';
 import ContactPage from './components/ContactPage';
 import LoginPage from './components/LoginPage';
+import WaveBackground from './components/WaveBackground';
+
+
+
 
 
 
@@ -126,6 +131,9 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
+
+
+
       <Navbar />
       <div className="pt-16">
         <Routes>
@@ -150,5 +158,10 @@ const AppWrapper = () => (
     <App />
   </Router>
 );
+
+
+
+
+
 
 export default AppWrapper;

@@ -11,3 +11,7 @@ body {
 * {
     box-sizing: border-box;
 }
+body {
+  background: linear-gradient(135deg, #0a1628 0%, #1a2a4a 50%, #0a1628 100%);
+  min-height: 100vh;
+}
